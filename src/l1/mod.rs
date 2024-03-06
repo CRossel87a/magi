@@ -207,7 +207,7 @@ impl InnerWatcher {
         } else {
             let l2_provider = generate_http_provider(&config.l2_rpc_url);
 
-            tokio::time::sleep(Duration::from_secs_f32(0.1)).await;
+            tokio::time::sleep(Duration::from_secs_f32(0.2)).await;
 
             let block = l2_provider
                 .get_block_with_txs(l2_start_block - 1)
