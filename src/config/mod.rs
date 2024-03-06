@@ -262,6 +262,7 @@ impl ChainConfig {
             "optimism-goerli" => Self::optimism_goerli(),
             "optimism-sepolia" => Self::optimism_sepolia(),
             "base" => Self::base(),
+            "blast" => Self::blast(),
             "base-goerli" => Self::base_goerli(),
             "base-sepolia" => Self::base_sepolia(),
             file if file.ends_with(".json") => Self::from_json(file),
@@ -534,12 +535,12 @@ impl ChainConfig {
                 gas_limit: U256::from(30000000),// ok
                 l1_fee_overhead: U256::from(188),// ok
                 l1_fee_scalar: U256::from(684000),// ok
-                unsafe_block_signer: addr("0xAf6E19BE0F9cE7f8afd49a1824851023A8249e8a"), // not ok
+                unsafe_block_signer: addr("0x164768144C688BF2bDa28E4072B2b30Ab705d568"), // ok
             },
             batch_inbox: addr("0xff00000000000000000000000000000000081457"),// ok
             deposit_contract: addr("0x0ec68c5b10f21effb74f2a5c61dfe6b08c0db6cb"),// ok
             system_config_contract: addr("0x5531dcff39ec1ec727c4c5d2fc49835368f805a9"),// ok
-            l2_to_l1_message_passer: addr("0x4200000000000000000000000000000000000016"), // need
+            l2_to_l1_message_passer: addr("0x4200000000000000000000000000000000000016"), // ok
             max_channel_size: 100_000_000,
             channel_timeout: 300,
             seq_window_size: 3600,
