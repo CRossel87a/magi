@@ -126,6 +126,7 @@ pub struct PayloadAttributes {
     /// skipped during serialization and deserialization.
     #[serde(skip)]
     pub seq_number: Option<u64>,
+    pub parent_beacon_block_root: Option<H256>
 }
 
 /// ## PayloadId

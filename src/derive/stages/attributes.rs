@@ -106,6 +106,7 @@ impl Attributes {
             epoch,
             l1_inclusion_block,
             seq_number,
+            parent_beacon_block_root: None
         }
     }
 
