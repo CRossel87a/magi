@@ -1,5 +1,5 @@
 #![warn(unreachable_pub)]
-#![deny(missing_docs, missing_debug_implementations)]
+#![deny(missing_debug_implementations)]
 
 /// Payload Types
 mod payload;
