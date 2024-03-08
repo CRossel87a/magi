@@ -169,7 +169,7 @@ impl<E: Engine> Driver<E> {
     async fn advance(&mut self) -> Result<()> {
 
 
-        if let Err(err) = self.advance_safe_head().await? {
+        if let Err(err) = self.advance_safe_head().await {
             println!("advance_safe_head(): {}",err);
         }
 
