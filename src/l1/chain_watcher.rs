@@ -16,7 +16,7 @@ use crate::{
     derive::stages::attributes::UserDeposited,
 };
 
-use super::{L1Info, SystemConfigUpdate};
+use super::{l1_info::L1BlockInfo, BlobFetcher, L1Info, SystemConfigUpdate};
 
 static CONFIG_UPDATE_TOPIC: Lazy<H256> =
     Lazy::new(|| H256::from_slice(&keccak256("ConfigUpdate(uint256,uint8,bytes)")));
@@ -61,6 +61,8 @@ struct InnerWatcher {
     config: Arc<Config>,
     /// Ethers provider for L1
     provider: Arc<Provider<RetryClient<Http>>>,
+    /// L1 beacon node to fetch blobs
+    blob_fetcher: Arc<BlobFetcher>,
     /// Channel to send block updates
     block_update_sender: mpsc::Sender<BlockUpdate>,
     /// Most recent ingested block
@@ -164,6 +166,7 @@ impl InnerWatcher {
         l2_start_block: u64,
     ) -> Self {
         let provider = generate_http_provider(&config.l1_rpc_url);
+        let blob_fetcher = Arc::new(BlobFetcher::new(Arc::clone(&config)));
 
         let system_config = if l2_start_block == config.chain.l2_genesis.number {
             config.chain.system_config
@@ -201,6 +204,7 @@ impl InnerWatcher {
         Self {
             config,
             provider,
+            blob_fetcher,
             block_update_sender,
             current_block: l1_start_block,
             head_block: 0,
@@ -239,15 +243,17 @@ impl InnerWatcher {
 
             let block = self.get_block(self.current_block).await?;
             let user_deposits = self.get_deposits(self.current_block).await?;
+            let batcher_transactions = self.blob_fetcher.get_batcher_transactions(&block).await?;
+
             let finalized = self.current_block >= self.finalized_block;
 
-            let l1_info = L1Info::new(
-                &block,
+            let l1_info = L1Info {
+                system_config: self.system_config,
+                block_info: L1BlockInfo::try_from(&block)?,
+                batcher_transactions,
                 user_deposits,
-                self.config.chain.batch_inbox,
                 finalized,
-                self.system_config,
-            )?;
+            };
 
             if l1_info.block_info.number >= self.finalized_block {
                 let block_info = BlockInfo {
@@ -416,7 +422,7 @@ fn generate_http_provider(url: &str) -> Arc<Provider<RetryClient<Http>>> {
         .timeout(Duration::from_secs(5))
         .build()
         .unwrap();
-    let http = Http::new_with_client(Url::parse(url).expect("ivnalid rpc url"), client);
+    let http = Http::new_with_client(Url::parse(url).expect("invalid rpc url"), client);
     let policy = Box::new(HttpRateLimitRetryPolicy);
     let client = RetryClient::new(http, policy, 100, 50);
     Arc::new(Provider::new(client))
