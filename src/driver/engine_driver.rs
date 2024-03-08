@@ -40,12 +40,8 @@ impl<E: Engine> EngineDriver<E> {
         let block: Option<Block<Transaction>> = self.block_at(attributes.timestamp.as_u64()).await;
 
         if let Some(block) = block {
-            if should_skip(&block, &attributes)? {
-                self.skip_attributes(attributes, block).await
-            } else {
-                self.unsafe_head = self.safe_head;
-                self.process_attributes(attributes).await
-            }
+            self.unsafe_head = self.safe_head;
+            self.process_attributes(attributes).await
         } else {
             self.process_attributes(attributes).await
         }
