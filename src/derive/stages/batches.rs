@@ -109,7 +109,7 @@ where
                         break Some(batch);
                     }
                     BatchStatus::Drop => {
-                        tracing::warn!("dropping invalid batch");
+                        //tracing::warn!("dropping invalid batch");
                         self.batches.remove(&timestamp);
                     }
                     BatchStatus::Future | BatchStatus::Undecided => {
@@ -280,7 +280,7 @@ where
         // check batch timestamp
 
         if span_end_timestamp < next_timestamp {
-            tracing::warn!("past batch");
+            //tracing::warn!("past batch");
             return BatchStatus::Drop;
         }
 
