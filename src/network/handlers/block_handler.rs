@@ -31,8 +31,7 @@ struct ExecutionPayloadEnvelope {
     payload: ExecutionPayload,
     signature: Signature,
     hash: PayloadHash,
-    #[allow(unused)]
-    parent_beacon_block_root: Option<H256>,
+    parent_beacon_block_root: H256,
 }
 
 impl Handler for BlockHandler {
@@ -41,9 +40,11 @@ impl Handler for BlockHandler {
         tracing::debug!("received block");
 
         let decoded = if msg.topic == self.blocks_v1_topic.hash() {
-            decode_pre_ecotone_block_msg::<ExecutionPayloadV1SSZ>(msg.data)
+            decode_post_ecotone_block_msg(msg.data)
+            //decode_pre_ecotone_block_msg::<ExecutionPayloadV1SSZ>(msg.data)
         } else if msg.topic == self.blocks_v2_topic.hash() {
-            decode_pre_ecotone_block_msg::<ExecutionPayloadV2SSZ>(msg.data)
+            decode_post_ecotone_block_msg(msg.data)
+            //decode_pre_ecotone_block_msg::<ExecutionPayloadV2SSZ>(msg.data)
         } else if msg.topic == self.blocks_v3_topic.hash() {
             decode_post_ecotone_block_msg(msg.data)
         } else {

@@ -40,9 +40,11 @@ impl<E: Engine> EngineDriver<E> {
         let block: Option<Block<Transaction>> = self.block_at(attributes.timestamp.as_u64()).await;
 
         if let Some(block) = block {
+            println!("Block is some");
             self.unsafe_head = self.safe_head;
             self.process_attributes(attributes).await
         } else {
+            println!("Block is none");
             self.process_attributes(attributes).await
         }
     }
