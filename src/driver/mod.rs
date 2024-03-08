@@ -24,7 +24,6 @@ use crate::{
     network::{handlers::block_handler::BlockHandler, service::Service},
     rpc,
     telemetry::metrics,
-    utils::printf
 };
 
 use self::engine_driver::EngineDriver;
@@ -160,7 +159,6 @@ impl<E: Engine> Driver<E> {
     /// Loops until the [EngineApi] is online and receives a response from the engine.
     async fn await_engine_ready(&self) {
         while !self.engine_driver.engine_ready().await {
-            println!("Waiting for engine");
             self.check_shutdown().await;
             sleep(Duration::from_secs(1)).await;
         }
@@ -229,8 +227,6 @@ impl<E: Engine> Driver<E> {
     /// Collects unsafe blocks received via p2p gossip and updates the forkchoice with the first available unsafe block.
     async fn advance_unsafe_head(&mut self) -> Result<()> {
         while let Ok(payload) = self.unsafe_block_recv.try_recv() {
-
-            tracing::info!("Received unsafe block: {}", payload.block_number);
             self.future_unsafe_blocks.push(payload);
         }
 

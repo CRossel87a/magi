@@ -94,7 +94,7 @@ where
             let batches = decode_batches(&channel, self.config.chain.l2_chain_id)?;
             batches.into_iter().for_each(|batch| {
                 let timestamp = batch.timestamp(&self.config);
-                //tracing::debug!("saw batch: t={}", timestamp);
+                tracing::debug!("saw batch: t={}", timestamp);
                 self.batches.insert(timestamp, batch);
             });
         }
@@ -109,7 +109,7 @@ where
                         break Some(batch);
                     }
                     BatchStatus::Drop => {
-                        //tracing::warn!("dropping invalid batch");
+                        tracing::warn!("dropping invalid batch");
                         self.batches.remove(&timestamp);
                     }
                     BatchStatus::Future | BatchStatus::Undecided => {
@@ -192,7 +192,7 @@ where
         match batch.timestamp.cmp(&next_timestamp) {
             Ordering::Greater => return BatchStatus::Future,
             Ordering::Less => {
-                //tracing::warn!("past batch");
+                tracing::warn!("past batch");
                 return BatchStatus::Drop;
             }
             Ordering::Equal => (),

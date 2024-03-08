@@ -40,8 +40,12 @@ impl<E: Engine> EngineDriver<E> {
         let block: Option<Block<Transaction>> = self.block_at(attributes.timestamp.as_u64()).await;
 
         if let Some(block) = block {
-            self.unsafe_head = self.safe_head;
-            self.process_attributes(attributes).await
+            if should_skip(&block, &attributes)? {
+                self.skip_attributes(attributes, block).await
+            } else {
+                self.unsafe_head = self.safe_head;
+                self.process_attributes(attributes).await
+            }
         } else {
             self.process_attributes(attributes).await
         }
@@ -117,8 +121,6 @@ impl<E: Engine> EngineDriver<E> {
         let new_epoch = *attributes.epoch.as_ref().unwrap();
         let new_head = BlockInfo::try_from(block)?;
         self.update_safe_head(new_head, new_epoch, false)?;
-
-        println!("skip_attributes() with blank payload");
         self.update_forkchoice().await?;
 
         Ok(())

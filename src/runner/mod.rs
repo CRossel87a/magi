@@ -173,15 +173,9 @@ impl Runner {
         let checkpoint_payload = ExecutionPayload::try_from(checkpoint_block)?;
 
         let payload_res = engine_api.new_payload(checkpoint_payload.clone()).await?;
-
-        match payload_res.status {
-            Status::Invalid | Status::InvalidBlockHash => {
-                tracing::error!("the provided checkpoint payload is invalid, exiting");
-                process::exit(1);
-            },
-            _=> {
-                tracing::info!("Payload delivered: {:?}",payload_res.status)
-            }
+        if let Status::Invalid | Status::InvalidBlockHash = payload_res.status {
+            tracing::error!("the provided checkpoint payload is invalid, exiting");
+            process::exit(1);
         }
 
         // make the execution client start syncing up to the checkpoint
