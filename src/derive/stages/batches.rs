@@ -192,7 +192,7 @@ where
         match batch.timestamp.cmp(&next_timestamp) {
             Ordering::Greater => return BatchStatus::Future,
             Ordering::Less => {
-                tracing::warn!("past batch");
+                //tracing::warn!("past batch");
                 return BatchStatus::Drop;
             }
             Ordering::Equal => (),

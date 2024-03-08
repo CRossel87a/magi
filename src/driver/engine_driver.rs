@@ -40,9 +40,11 @@ impl<E: Engine> EngineDriver<E> {
         let block: Option<Block<Transaction>> = self.block_at(attributes.timestamp.as_u64()).await;
 
         if let Some(block) = block {
+            println!("Block is some");
             self.unsafe_head = self.safe_head;
             self.process_attributes(attributes).await
         } else {
+            println!("Block is none");
             self.process_attributes(attributes).await
         }
     }
@@ -125,11 +127,14 @@ impl<E: Engine> EngineDriver<E> {
     /// Sends [PayloadAttributes] via a `ForkChoiceUpdated` message to the [Engine] and returns the [ExecutionPayload] sent by the Execution Client.
     async fn build_payload(&self, attributes: PayloadAttributes) -> Result<ExecutionPayload> {
         let forkchoice = self.create_forkchoice_state();
+        dbg!(&forkchoice);
 
         let update = self
             .engine
             .forkchoice_updated(forkchoice, Some(attributes))
             .await?;
+
+        println!("build_payload point passed");
 
         if update.payload_status.status != Status::Valid {
             eyre::bail!("invalid payload attributes");

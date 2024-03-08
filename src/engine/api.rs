@@ -218,6 +218,10 @@ impl Engine for EngineApi {
         };
         let forkchoice_state_param = serde_json::to_value(forkchoice_state)?;
         let params = vec![forkchoice_state_param, payload_attributes_param];
+        
+        dbg!(&params);
+
+
         let res = self.post(ENGINE_FORKCHOICE_UPDATED_V2, params).await?;
         Ok(res)
     }
