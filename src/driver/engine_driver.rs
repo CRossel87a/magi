@@ -134,11 +134,13 @@ impl<E: Engine> EngineDriver<E> {
             .forkchoice_updated(forkchoice, Some(attributes))
             .await?;
 
-        println!("build_payload point passed");
 
+        dbg!(&update.payload_status.status);
         if update.payload_status.status != Status::Valid {
             eyre::bail!("invalid payload attributes");
         }
+
+        println!("build_payload point passed");
 
         let id = update
             .payload_id

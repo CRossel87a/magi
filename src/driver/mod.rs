@@ -167,7 +167,13 @@ impl<E: Engine> Driver<E> {
     /// Attempts to advance the execution node forward using either L1 info or
     /// blocks received on the p2p network.
     async fn advance(&mut self) -> Result<()> {
-        self.advance_safe_head().await?;
+
+
+        if let Err(err) = self.advance_safe_head().await? {
+            println!("advance_safe_head(): {}",err);
+        }
+
+
         self.advance_unsafe_head().await?;
 
         self.update_finalized();
