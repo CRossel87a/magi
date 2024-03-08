@@ -94,7 +94,7 @@ where
             let batches = decode_batches(&channel, self.config.chain.l2_chain_id)?;
             batches.into_iter().for_each(|batch| {
                 let timestamp = batch.timestamp(&self.config);
-                tracing::debug!("saw batch: t={}", timestamp);
+                //tracing::debug!("saw batch: t={}", timestamp);
                 self.batches.insert(timestamp, batch);
             });
         }
