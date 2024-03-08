@@ -224,6 +224,9 @@ impl Engine for EngineApi {
 
     /// Sends an `engine_newPayloadV2` (V3 post Ecotone) message to the engine.
     async fn new_payload(&self, execution_payload: ExecutionPayload) -> Result<PayloadStatus> {
+
+        tracing::info!("Delivering payload block {}",execution_payload.block_number);
+
         let params = vec![serde_json::to_value(execution_payload)?];
         let res = self.post(ENGINE_NEW_PAYLOAD_V2, params).await?;
         Ok(res)
