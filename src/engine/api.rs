@@ -226,6 +226,7 @@ impl Engine for EngineApi {
     async fn new_payload(&self, execution_payload: ExecutionPayload) -> Result<PayloadStatus> {
 
         tracing::info!("Delivering payload block {}",execution_payload.block_number);
+        println!("Delivering payload block {}",execution_payload.block_number);
 
         let params = vec![serde_json::to_value(execution_payload)?];
         let res = self.post(ENGINE_NEW_PAYLOAD_V2, params).await?;

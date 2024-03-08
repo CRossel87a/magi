@@ -121,6 +121,8 @@ impl<E: Engine> EngineDriver<E> {
         let new_epoch = *attributes.epoch.as_ref().unwrap();
         let new_head = BlockInfo::try_from(block)?;
         self.update_safe_head(new_head, new_epoch, false)?;
+
+        println!("skip_attributes() with blank payload");
         self.update_forkchoice().await?;
 
         Ok(())
