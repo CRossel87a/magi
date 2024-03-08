@@ -18,7 +18,7 @@ use crate::{
 
 /// Temporary trusted/static peer used for checkpoint sync mode.
 // TODO: use a list of whitelisted bootnodes instead
-const TRUSTED_PEER_ENODE: &str = "enode://e85ba0beec172b17f53b373b0ab72238754259aa39f1ae5290e3244e0120882f4cf95acd203661a27c8618b27ca014d4e193266cb3feae43655ed55358eedb06@3.86.143.120:30303?discport=21693";
+const TRUSTED_PEER_ENODE: &str = "enode://b933f6f60f2dc233c0ec54e5032e49841ba34d16d8dd399773e8f6c9623f90a81c8c3d05c57af9dffe7bec29a6e023ea2b270a540e817bd354ef9fae5db72fcb@127.0.0.1:30303";
 
 /// The main entrypoint for starting a Magi node.
 /// Responsible for starting the syncing process.
