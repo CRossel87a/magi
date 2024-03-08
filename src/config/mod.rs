@@ -586,8 +586,8 @@ impl ChainConfig {
             blocktime: 2,
             regolith_time: 0,
             canyon_time: 0,
-            delta_time: 0,
-            ecotone_time: 0,
+            delta_time: u64::MAX,
+            ecotone_time: u64::MAX,
         }
     }
 }
