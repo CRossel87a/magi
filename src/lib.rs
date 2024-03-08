@@ -72,3 +72,5 @@ pub mod runner;
 
 /// A module to get current Magi version.
 pub mod version;
+
+pub mod utils;
