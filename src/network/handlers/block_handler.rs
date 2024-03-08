@@ -115,7 +115,6 @@ impl BlockHandler {
     }
 }
 
-/* 
 /// Decodes a sequence of bytes to an [ExecutionPayloadEnvelope]
 fn decode_pre_ecotone_block_msg<T>(data: Vec<u8>) -> Result<ExecutionPayloadEnvelope>
 where
@@ -141,7 +140,6 @@ where
         hash,
     })
 }
-*/
 
 /// Decodes a sequence of bytes to an [ExecutionPayloadEnvelope]. The Ecotone V3
 /// block topic encoding includes the parent beacon block root as described in the [specs].
@@ -156,7 +154,7 @@ fn decode_post_ecotone_block_msg(data: Vec<u8>) -> Result<ExecutionPayloadEnvelo
 
     let signature = Signature::try_from(sig_data)?;
 
-    let parent_beacon_block_root = H256::from_slice(parent_beacon_block_root);
+    let parent_beacon_block_root = Some(H256::from_slice(parent_beacon_block_root));
 
     let payload: ExecutionPayloadV3SSZ = deserialize(block_data)?;
     let payload = ExecutionPayload::from(payload);
