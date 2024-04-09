@@ -24,7 +24,6 @@ use crate::{
     network::{handlers::block_handler::BlockHandler, service::Service},
     rpc,
     telemetry::metrics,
-    utils::printf
 };
 
 use self::engine_driver::EngineDriver;
@@ -160,7 +159,6 @@ impl<E: Engine> Driver<E> {
     /// Loops until the [EngineApi] is online and receives a response from the engine.
     async fn await_engine_ready(&self) {
         while !self.engine_driver.engine_ready().await {
-            println!("Waiting for engine");
             self.check_shutdown().await;
             sleep(Duration::from_secs(1)).await;
         }
@@ -197,7 +195,8 @@ impl<E: Engine> Driver<E> {
 
             self.engine_driver
                 .handle_attributes(next_attributes)
-                .await?;
+                .await
+                .map_err(|e| eyre::eyre!("failed to handle attributes: {}", e))?;
 
             tracing::info!(
                 "safe head updated: {} {:?}",
@@ -229,8 +228,6 @@ impl<E: Engine> Driver<E> {
     /// Collects unsafe blocks received via p2p gossip and updates the forkchoice with the first available unsafe block.
     async fn advance_unsafe_head(&mut self) -> Result<()> {
         while let Ok(payload) = self.unsafe_block_recv.try_recv() {
-
-            tracing::info!("Received unsafe block: {}", payload.block_number);
             self.future_unsafe_blocks.push(payload);
         }
 
@@ -277,8 +274,11 @@ impl<E: Engine> Driver<E> {
                     self.unsafe_block_signer_sender
                         .send(l1_info.system_config.unsafe_block_signer)?;
 
-                    self.pipeline
-                        .push_batcher_transactions(l1_info.batcher_transactions.clone(), num)?;
+                    self.pipeline.push_batcher_transactions(
+                        // cloning `bytes::Bytes` is cheap
+                        l1_info.batcher_transactions.clone(),
+                        num,
+                    )?;
 
                     self.state
                         .write()
@@ -389,6 +389,7 @@ mod tests {
             let l2_rpc = std::env::var("L2_TEST_RPC_URL")?;
             let cli_config = CliConfig {
                 l1_rpc_url: Some(rpc.to_owned()),
+                l1_beacon_url: None,
                 l2_rpc_url: Some(l2_rpc.to_owned()),
                 l2_engine_url: None,
                 jwt_secret: Some(
