@@ -406,7 +406,6 @@ mod tests {
     ) {
         let config = Config {
             l1_rpc_url: String::new(),
-            l1_beacon_url: String::new(),
             l2_rpc_url: String::new(),
             l2_engine_url: String::new(),
             jwt_secret: String::new(),
